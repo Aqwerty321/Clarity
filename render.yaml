@@ -2,12 +2,14 @@
 # This is a MINIMAL sync service - NO AI processing
 # All AI operations happen locally on the user's machine
 
-services:
+databases:
   # PostgreSQL Database - Stores only user metadata and backups
-  - type: pserv
-    name: clarity-db
+  - name: clarity-db
     plan: free
+    databaseName: clarity_db
+    user: clarity_user
 
+services:
   # Minimal Sync Service - NO AI, only metadata sync
   - type: web
     name: clarity-sync-service
