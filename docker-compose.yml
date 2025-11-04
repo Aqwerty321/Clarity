@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Frontend (Vue + Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_AUTH0_DOMAIN=${VITE_AUTH0_DOMAIN}
+      - VITE_AUTH0_CLIENT_ID=${VITE_AUTH0_CLIENT_ID}
+      - VITE_AUTH0_AUDIENCE=${VITE_AUTH0_AUDIENCE}
+      - VITE_AUTH0_CALLBACK_URL=http://localhost:5173/callback
+    depends_on:
+      - local_backend
+    networks:
+      - clarity-network
+
+  # Local Backend (FastAPI + ChromaDB)
+  local_backend:
+    build:
+      context: ./local_backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./local_backend:/app
+      - clarity-chroma-data:/root/.clarity/chroma
+      - clarity-logs:/root/.clarity/logs
+    environment:
+      - CLARITY_BASE_DIR=/root/.clarity
+      - CLARITY_CHUNK_SIZE=500
+      - CLARITY_CHUNK_OVERLAP=100
+      - EMBED_BATCH_SIZE=32
+      - EMBEDDING_MODEL=all-MiniLM-L6-v2
+      - LLM_PROVIDER=mock
+      - RENDER_BACKEND_URL=${RENDER_BACKEND_URL:-http://localhost:8000}
+    networks:
+      - clarity-network
+
+  # PostgreSQL (for local testing of sync backend)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=clarity_user
+      - POSTGRES_PASSWORD=clarity_pass
+      - POSTGRES_DB=clarity_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - clarity-network
+
+  # Render Backend (optional - for local testing)
+  # render_backend:
+  #   build:
+  #     context: ./render_backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+  #     - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+  #     - DATABASE_URL=postgresql://clarity_user:clarity_pass@postgres:5432/clarity_db
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - clarity-network
+
+volumes:
+  clarity-chroma-data:
+  clarity-logs:
+  postgres-data:
+
+networks:
+  clarity-network:
+    driver: bridge

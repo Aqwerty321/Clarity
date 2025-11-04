@@ -1,0 +1,35 @@
+{
+  "name": "clarity",
+  "version": "1.0.0",
+  "description": "Local-first, privacy-focused personal learning assistant",
+  "main": "index.js",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd local_backend && uvicorn app.main:app --reload --port 5000",
+    "build": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd local_backend && pytest tests/ -v",
+    "test:frontend": "cd frontend && npm run test",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd local_backend && ruff check .",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/clarity.git"
+  },
+  "keywords": [
+    "rag",
+    "llm",
+    "learning",
+    "ai",
+    "privacy",
+    "local-first",
+    "education"
+  ],
+  "author": "Clarity Contributors",
+  "license": "MIT",
+  "private": false
+}
