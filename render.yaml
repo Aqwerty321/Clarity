@@ -7,8 +7,6 @@ services:
   - type: pserv
     name: clarity-db
     plan: free
-    databaseName: clarity_db
-    user: clarity_user
 
   # Minimal Sync Service - NO AI, only metadata sync
   - type: web
