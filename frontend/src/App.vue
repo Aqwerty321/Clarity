@@ -57,8 +57,8 @@ onMounted(() => {
 /* Sync Status Wrapper */
 .sync-status-wrapper {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  bottom: 1.5rem;
+  right: 1.5rem;
   z-index: 100;
 }
 
